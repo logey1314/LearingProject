@@ -112,5 +112,58 @@ public class FileUpDownServiceImp implements Runnable, FileUpDownService {
     // 文件下载功能
     @Override
     public void downloadFile(String agreement, InputStream netIn, OutputStream netOut) throws IOException {
+
+        //响应客户端使用
+        //获取客户端想要浏览的目录
+        String fileName = AgreementUtil.getFileName(agreement);// chid
+        //root是提供给客户端的虚拟路径，转换为服务端的真实路径
+
+        //String fileDir = fileName.replace("root", rootDir.toString());
+        String fileDir=fileName;
+        File dir = new File(fileDir);
+
+        if (dir.exists()&&!dir.isDirectory()) {
+            /*// 封装协议
+            String s = AgreementUtil.getAgreement("DOWNLOAD", null, "FAILED", "目录不存在.只能浏览当前子目录");
+            // 发送协议
+            AgreementUtil.sendAgreement(netOut, s);*/
+            String s = AgreementUtil.getAgreement("DOWNLOAD", dir.getName(), "OK", "null");
+            AgreementUtil.sendAgreement(netOut, s);
+            try(FileInputStream fileInputStream=new FileInputStream(dir);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream)) {
+                byte[] buf = new byte[4096];
+                int len;
+                while ((len = bufferedInputStream.read(buf)) != -1) {
+                    netOut.write(buf, 0, len);
+                }
+                netOut.flush();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+
+        } else {
+         /*   // 封装协议  123
+            String s = AgreementUtil.getAgreement("SCAN", fileDir, "OK", null);
+            //scan 路径 ok null   /r数据
+            AgreementUtil.sendAgreement(netOut, s);
+
+            //把具体数据随后发送
+            //把文件数据按照："文件类型 名称"   发送，每一个子文件一行
+            OutputStreamWriter osw = new OutputStreamWriter(netOut);
+            File[] children = dir.listFiles();
+
+            for (File child : children) {
+                String fileType = child.isFile() ? "文件" : "目录";
+                osw.write(fileType + " " + child.getName() + "\r\n");//每个文件一行
+            }
+            //刷新数据
+            osw.flush();*/
+            String s = AgreementUtil.getAgreement("DOWNLOAD", null, "FAILED", "文件不存在或为目录");
+            AgreementUtil.sendAgreement(netOut, s);
+        }
+
+
+
     }
 }

@@ -161,6 +161,69 @@ public class FileUpDownServiceImp implements FileUpDownService {
     // 文件下载
     @Override
     public void downloadFile(File file) {
+
+        try (Socket socket = new Socket("127.0.0.1", 8888);
+             // 用来客户端读取服务端的数据
+             InputStream netIn = socket.getInputStream();
+             // 用来客户端给服务端发送数据
+             OutputStream netOut = socket.getOutputStream();
+        ) {
+            /*
+                获取了协议
+                解析 : 拿到协议对象 , 协议对象中封装的是要做浏览数据 , 操作文件的路径
+                scanDirProtocol对象 : scan , root
+                scan  chid null null
+            */
+            String down = AgreementUtil.getAgreement("DOWNLOAD", file.getPath(), null, null);
+            // 给服务端发送协议
+            AgreementUtil.sendAgreement(netOut, down);
+
+            System.out.println("===============等待服务器给回应消息================");
+
+            //接收消息
+            BufferedReader br = new BufferedReader(new InputStreamReader(netIn));
+
+            String content;
+            //System.out.println("开始接收数据：");
+            //scan 路径 ok null
+            String firstLine = br.readLine();//协议 , 阻塞
+
+            // 把服务端发送过来的一行协议字符串 , 封装成协议对象
+            String type = AgreementUtil.getStatus(firstLine);
+            // 获取协议对象中的状态
+            if (type.equals("OK")) {
+                /*// 成功
+                // 服务端发过来的真正存储数据的file路径, 覆盖给current变量
+                current = new File(AgreementUtil.getFileName(firstLine));
+                System.out.println("当前目录：" + current);
+                while ((content = br.readLine()) != null) {
+                    System.out.println(content);
+                }*/
+                String fileName = AgreementUtil.getFileName(firstLine);
+                File saveFile = new File( downloadPath,fileName);
+                try(FileOutputStream fos = new FileOutputStream(saveFile);
+                BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = netIn.read(buffer)) != -1) {
+                        bos.write(buffer, 0, len);
+                    }
+                    bos.flush();
+                    System.out.println(fileName+"下载成功");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            } else {
+                // 失败
+                System.out.println("下载失败:" + AgreementUtil.getMessage(firstLine));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
     // 文件上传

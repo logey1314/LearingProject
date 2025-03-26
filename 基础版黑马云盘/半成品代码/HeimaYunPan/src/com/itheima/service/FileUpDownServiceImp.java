@@ -39,14 +39,16 @@ public class FileUpDownServiceImp implements Runnable, FileUpDownService {
         ) {
             // 读协议
             final String agreement = AgreementUtil.receiveAgreement(netIn);
+            //Type=scan，FileName=root，Status=null,Message=null
             // System.out.println("接收客户端数据：" + agreement);
 
             // 解析字符串
             String type = AgreementUtil.getType(agreement);
+            //scan
             // System.out.println("解析字符串的数据类型:" + type);
             switch (type) {
                 case "SCAN"://客户端要浏览
-                    scanDirectory(agreement, netIn, netOut);
+                    scanDirectory(agreement, netIn, netOut);//scan
                     break;
                 case "DOWNLOAD"://客户端要下载
                     downloadFile(agreement, netIn, netOut);
@@ -65,10 +67,17 @@ public class FileUpDownServiceImp implements Runnable, FileUpDownService {
     public void scanDirectory(String agreement, InputStream netIn, OutputStream netOut) throws IOException {
         //响应客户端使用
         //获取客户端想要浏览的目录
-        String fileName = AgreementUtil.getFileName(agreement);// root
+        String fileName = AgreementUtil.getFileName(agreement);// chid
         //root是提供给客户端的虚拟路径，转换为服务端的真实路径
+
+
+
         String fileDir = fileName.replace("root", rootDir.toString());
         File dir = new File(fileDir);
+
+
+
+
 
         if (dir.isFile()) {
             // 封装协议
@@ -76,8 +85,9 @@ public class FileUpDownServiceImp implements Runnable, FileUpDownService {
             // 发送协议
             AgreementUtil.sendAgreement(netOut, s);
         } else {
-            // 封装协议
+            // 封装协议  123
             String s = AgreementUtil.getAgreement("SCAN", fileDir, "OK", null);
+            //scan 路径 ok null   /r数据
             AgreementUtil.sendAgreement(netOut, s);
 
             //把具体数据随后发送

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="e7d8e5ce-54f6-4ad6-b4b1-e58ab744a1c5" name="更改" comment="1" />
+    <list default="true" id="e7d8e5ce-54f6-4ad6-b4b1-e58ab744a1c5" name="更改" comment="1">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/HeimaYunPanClient/com/ithiema/service/FileUpDownServiceImp.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/HeimaYunPanClient/com/ithiema/service/FileUpDownServiceImp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/HeimaYunPanClient/com/ithiema/util/AgreementUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/HeimaYunPanClient/com/ithiema/util/AgreementUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/HeimaYunPanClient/yunpan.properties" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/HeimaYunPanClient/yunpan.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/半成品代码/HeimaYunPan/src/com/itheima/service/FileUpDownServiceImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/半成品代码/HeimaYunPan/src/com/itheima/service/FileUpDownServiceImp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/半成品代码/HeimaYunPan/src/com/itheima/util/AgreementUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/半成品代码/HeimaYunPan/src/com/itheima/util/AgreementUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/半成品代码/HeimaYunPan/src/yunpan.properties" beforeDir="false" afterPath="$PROJECT_DIR$/半成品代码/HeimaYunPan/src/yunpan.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/半成品代码/HeimaYunPanClient/src/com/ithiema/service/FileUpDownServiceImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/半成品代码/HeimaYunPanClient/src/com/ithiema/service/FileUpDownServiceImp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/半成品代码/HeimaYunPanClient/src/com/ithiema/util/AgreementUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/半成品代码/HeimaYunPanClient/src/com/ithiema/util/AgreementUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/半成品代码/HeimaYunPanClient/src/yunpan.properties" beforeDir="false" afterPath="$PROJECT_DIR$/半成品代码/HeimaYunPanClient/src/yunpan.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,15 +46,55 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.ServerApp.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "F:/java/project/LearingProject/基础版黑马云盘",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true",
+    "应用程序.ServerApp.executor": "Run",
     "应用程序.YunPanApp.executor": "Run"
   }
 }]]></component>
+  <component name="RunManager" selected="应用程序.YunPanApp">
+    <configuration name="ServerApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.itheima.main.ServerApp" />
+      <module name="HeimaYunPan" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.itheima.main.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="YunPanApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ithiema.main.YunPanApp" />
+      <module name="HeimaYunPanClient" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ithiema.main.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="应用程序.YunPanApp" />
+        <item itemvalue="应用程序.ServerApp" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -61,6 +115,8 @@
       <workItem from="1742893226552" duration="4000" />
       <workItem from="1742893285147" duration="154000" />
       <workItem from="1742893544804" duration="19000" />
+      <workItem from="1742893734130" duration="13298000" />
+      <workItem from="1742954317210" duration="1135000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <option name="closed" value="true" />

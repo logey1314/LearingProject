@@ -9,8 +9,11 @@ import java.io.*;
 public class AgreementUtil {
     // 解析协议 : 文件类型
     public static String getType(String agreement) {
+        //Type=scan，FileName=root，Status=null,Message=null
+        //{Type=scan  FileName=f\\ \\server  Status=null Message=null }
         String[] strings = agreement.split(",");
         return strings[0].split("=")[1];
+        //scan
     }
 
     // 解析协议 : 文件名字

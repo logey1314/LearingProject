@@ -57,6 +57,7 @@ public class FileUpDownServiceImp implements FileUpDownService {
                 switch (choice) {
                     case "1":
                         scanDirection(current);
+                        //System.out.println("___"+current.getName()+"__");
                         break;
                     case "2":
                         System.out.println("请输入要浏览的子目录：");
@@ -72,6 +73,7 @@ public class FileUpDownServiceImp implements FileUpDownService {
                         if (current.getName().equals("root")) {
                             System.out.println("没有上一级了");
                         } else {
+                            //System.out.println("___"+current.getParentFile().getName()+"__");
                             scanDirection(current.getParentFile());
                         }
                         break;
@@ -107,7 +109,7 @@ public class FileUpDownServiceImp implements FileUpDownService {
 
     // 文件浏览
     @Override
-    public void scanDirection(File path) {
+    public void scanDirection(File path) {//子目录地址
         //连接服务端
         try (Socket socket = new Socket("127.0.0.1", 8888);
              // 用来客户端读取服务端的数据
@@ -119,9 +121,10 @@ public class FileUpDownServiceImp implements FileUpDownService {
                 获取了协议
                 解析 : 拿到协议对象 , 协议对象中封装的是要做浏览数据 , 操作文件的路径
                 scanDirProtocol对象 : scan , root
+                scan  chid null null
             */
-            String scan = AgreementUtil.getAgreement("SCAN", path.getName(), null, null);
-
+            String scan = AgreementUtil.getAgreement("SCAN", path.getPath(), null, null);
+            //scan  Type=scan，FileName=root，Status=null,Message=message
             // 给服务端发送协议
             AgreementUtil.sendAgreement(netOut, scan);
 
@@ -132,6 +135,7 @@ public class FileUpDownServiceImp implements FileUpDownService {
 
             String content;
             //System.out.println("开始接收数据：");
+            //scan 路径 ok null
             String firstLine = br.readLine();//协议 , 阻塞
 
             // 把服务端发送过来的一行协议字符串 , 封装成协议对象

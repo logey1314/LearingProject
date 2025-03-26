@@ -33,16 +33,22 @@ public class AgreementUtil {
 
     // 封装协议 , 并返回
     public static String getAgreement(String type, String fileName, String status, String message) {
+        //scan  root null null
         StringBuilder sb = new StringBuilder();
         sb.append("Type").append("=").append(type).append(",");
+        //Type=scan，
         sb.append("FileName").append("=").append(fileName).append(",");
+        //Type=scan，FileName=f\\ \\ server，
         sb.append("Status").append("=").append(status).append(",");
+        //Type=scan，FileName=root，Status=null,
         sb.append("Message").append("=").append(message);
+        //Type=scan，FileName=f\\ \\server，Status=null,Message=null
         return sb.toString();
     }
 
     // 发送协议
     public static void sendAgreement(OutputStream netOut, String agreement) throws IOException {
+        //流 Type=scan，FileName=root，Status=null,Message=message
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(netOut));
         bw.write(agreement);
         bw.newLine();
@@ -51,7 +57,7 @@ public class AgreementUtil {
 
     // 接收协议
     public static String receiveAgreement(InputStream netIn) throws IOException {
-        //读取第一行数据
+        //读取第一行数据  //Type=scan，FileName=root，Status=null,Message=null
         BufferedReader br = new BufferedReader(new InputStreamReader(netIn));
         String agreementContent = br.readLine();
         return agreementContent;

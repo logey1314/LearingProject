@@ -241,15 +241,11 @@ public class FileUpDownServiceImp implements FileUpDownService {
             BufferedInputStream bis = new BufferedInputStream(fis)){
                 byte[] buffer = new byte[4096];
                 int len;
-
                 //long totalSent = 0;
-
                 System.out.println("--------"+"开始发送"+"----------------");
                 while ((len = bis.read(buffer)) != -1) {
                     netOut.write(buffer, 0, len);
-
                     //totalSent += len;
-
                 }
                 netOut.flush();
 

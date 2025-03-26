@@ -107,7 +107,86 @@ public class FileUpDownServiceImp implements Runnable, FileUpDownService {
     // 文件上传功能
     @Override
     public void uploadFile(String agreement, InputStream netIn, OutputStream netOut) throws IOException {
+        File upDir = new File(bundle.getString("clientUpDir"));
+        String filedir = AgreementUtil.getFileName(agreement);
+        String fileName = filedir.substring(filedir.lastIndexOf("\\") + 1);
+        File newFile = new File(upDir, fileName);
+        System.out.println("--------"+"开始接收"+"----------------");
+        try(FileOutputStream fos = new FileOutputStream(newFile);
+        BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+            byte[] buf = new byte[4096];
+            int len;
+            while ((len = netIn.read(buf)) != -1) {
+                bos.write(buf, 0, len);
+            }
+            bos.flush();
+            System.out.println("--------"+"接收成功"+"----------------");
+            String up = AgreementUtil.getAgreement("UPLOAD", fileName, "OK", "上传成功");
+            AgreementUtil.sendAgreement(netOut, up);
+        } catch (Exception e) {
+            System.out.println("文件接收过程中发生异常: " + e.getMessage());
+            e.printStackTrace();
+
+            String up = AgreementUtil.getAgreement("UPLOAD", fileName, "ERROR", "上传失败: " + e.getMessage());
+            System.out.println("发送失败响应: " + up);
+            AgreementUtil.sendAgreement(netOut, up);
+        }
+
     }
+
+
+/*    // 服务端上传处理代码修改
+    @Override
+    public void uploadFile(String agreement, InputStream netIn, OutputStream netOut) throws IOException {
+        System.out.println("收到上传请求: " + agreement);
+
+        File upDir = new File(bundle.getString("clientUpDir"));
+        if (!upDir.exists()) {
+            upDir.mkdirs();
+            System.out.println("创建上传目录: " + upDir.getAbsolutePath());
+        }
+
+        String filedir = AgreementUtil.getFileName(agreement);
+        String fileName = filedir.substring(filedir.lastIndexOf("\\") + 1);
+        File newFile = new File(upDir, fileName);
+
+        System.out.println("准备接收文件: " + newFile.getAbsolutePath());
+
+        try (FileOutputStream fos = new FileOutputStream(newFile);
+             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+
+            byte[] buf = new byte[4096];
+            int len;
+            long totalReceived = 0;
+
+            System.out.println("开始接收文件数据...");
+
+            while ((len = netIn.read(buf)) != -1) {
+                bos.write(buf, 0, len);
+                totalReceived += len;
+                if (totalReceived % (1024 * 1024) == 0) { // 每MB打印一次
+                    System.out.println("已接收: " + (totalReceived / 1024 / 1024) + "MB");
+                }
+            }
+
+            bos.flush();
+            System.out.println("文件接收完毕，总共接收: " + totalReceived + " 字节");
+            System.out.println("保存的文件大小: " + newFile.length() + " 字节");
+
+            String up = AgreementUtil.getAgreement("UPLOAD", fileName, "OK", "上传成功");
+            System.out.println("发送成功响应: " + up);
+            AgreementUtil.sendAgreement(netOut, up);
+        } catch (Exception e) {
+            System.out.println("文件接收过程中发生异常: " + e.getMessage());
+            e.printStackTrace();
+
+            String up = AgreementUtil.getAgreement("UPLOAD", fileName, "ERROR", "上传失败: " + e.getMessage());
+            System.out.println("发送失败响应: " + up);
+            AgreementUtil.sendAgreement(netOut, up);
+        }
+    }*/
+
+
 
     // 文件下载功能
     @Override
@@ -143,22 +222,6 @@ public class FileUpDownServiceImp implements Runnable, FileUpDownService {
 
 
         } else {
-         /*   // 封装协议  123
-            String s = AgreementUtil.getAgreement("SCAN", fileDir, "OK", null);
-            //scan 路径 ok null   /r数据
-            AgreementUtil.sendAgreement(netOut, s);
-
-            //把具体数据随后发送
-            //把文件数据按照："文件类型 名称"   发送，每一个子文件一行
-            OutputStreamWriter osw = new OutputStreamWriter(netOut);
-            File[] children = dir.listFiles();
-
-            for (File child : children) {
-                String fileType = child.isFile() ? "文件" : "目录";
-                osw.write(fileType + " " + child.getName() + "\r\n");//每个文件一行
-            }
-            //刷新数据
-            osw.flush();*/
             String s = AgreementUtil.getAgreement("DOWNLOAD", null, "FAILED", "文件不存在或为目录");
             AgreementUtil.sendAgreement(netOut, s);
         }

@@ -168,12 +168,9 @@ public class FileUpDownServiceImp implements FileUpDownService {
              // 用来客户端给服务端发送数据
              OutputStream netOut = socket.getOutputStream();
         ) {
-            /*
-                获取了协议
-                解析 : 拿到协议对象 , 协议对象中封装的是要做浏览数据 , 操作文件的路径
-                scanDirProtocol对象 : scan , root
-                scan  chid null null
-            */
+
+
+
             String down = AgreementUtil.getAgreement("DOWNLOAD", file.getPath(), null, null);
             // 给服务端发送协议
             AgreementUtil.sendAgreement(netOut, down);
@@ -192,13 +189,6 @@ public class FileUpDownServiceImp implements FileUpDownService {
             String type = AgreementUtil.getStatus(firstLine);
             // 获取协议对象中的状态
             if (type.equals("OK")) {
-                /*// 成功
-                // 服务端发过来的真正存储数据的file路径, 覆盖给current变量
-                current = new File(AgreementUtil.getFileName(firstLine));
-                System.out.println("当前目录：" + current);
-                while ((content = br.readLine()) != null) {
-                    System.out.println(content);
-                }*/
                 String fileName = AgreementUtil.getFileName(firstLine);
                 File saveFile = new File( downloadPath,fileName);
                 try(FileOutputStream fos = new FileOutputStream(saveFile);
@@ -226,8 +216,141 @@ public class FileUpDownServiceImp implements FileUpDownService {
 
     }
 
-    // 文件上传
+    // 文件上传   上传文件路径
     @Override
     public void uploadFile(File upFile) {
+        System.out.println("准备上传文件: " + upFile.getAbsolutePath());
+        System.out.println("文件大小: " + upFile.length() + " 字节");
+        System.out.println("文件是否存在: " + upFile.exists());
+        try (Socket socket = new Socket("127.0.0.1", 8888);
+             // 用来客户端读取服务端的数据
+             InputStream netIn = socket.getInputStream();
+             // 用来客户端给服务端发送数据
+             OutputStream netOut = socket.getOutputStream();){
+
+            //System.out.println("已连接到服务器: " + socket.getInetAddress() + ":" + socket.getPort());
+            Thread.sleep(50);
+
+            String down = AgreementUtil.getAgreement("UPLOAD", upFile.getPath(), null, null);
+
+            //System.out.println("发送协议: " + down);
+
+            // 给服务端发送协议
+            AgreementUtil.sendAgreement(netOut, down);
+            try(FileInputStream fis = new FileInputStream(upFile);
+            BufferedInputStream bis = new BufferedInputStream(fis)){
+                byte[] buffer = new byte[4096];
+                int len;
+
+                //long totalSent = 0;
+
+                System.out.println("--------"+"开始发送"+"----------------");
+                while ((len = bis.read(buffer)) != -1) {
+                    netOut.write(buffer, 0, len);
+
+                    //totalSent += len;
+
+                }
+                netOut.flush();
+
+                //System.out.println("文件数据发送完毕，总共发送: " + totalSent + " 字节");
+
+                //System.out.println("关闭输出流...");
+
+                socket.shutdownOutput();
+                //System.out.println("输出流已关闭");
+
+
+                System.out.println("--------"+"发送成功"+"----------------");
+            }catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            System.out.println("===============等待服务器给回应消息================");
+
+            //接收消息
+            BufferedReader br = new BufferedReader(new InputStreamReader(netIn));
+            String firstLine = br.readLine();//协议 , 阻塞
+            // 把服务端发送过来的一行协议字符串 , 封装成协议对象
+                                           //System.out.println("收到服务器响应: " + firstLine);
+            String type = AgreementUtil.getStatus(firstLine);
+            // 获取协议对象中的状态
+            if (type.equals("OK")) {
+                String fileName = AgreementUtil.getFileName(firstLine);
+                System.out.println(fileName+"上传成功");
+            } else {
+                // 失败
+                System.out.println("上传失败:" + AgreementUtil.getMessage(firstLine));
+            }
+        } catch (IOException e) {
+            //System.out.println("上传过程中发生异常: " + e.getMessage());
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
+
+
+/*    // 客户端上传代码修改
+    @Override
+    public void uploadFile(File upFile) {
+        System.out.println("准备上传文件: " + upFile.getAbsolutePath());
+        System.out.println("文件大小: " + upFile.length() + " 字节");
+        System.out.println("文件是否存在: " + upFile.exists());
+
+        try (Socket socket = new Socket("127.0.0.1", 8888);
+             InputStream netIn = socket.getInputStream();
+             OutputStream netOut = socket.getOutputStream()) {
+
+            System.out.println("已连接到服务器: " + socket.getInetAddress() + ":" + socket.getPort());
+
+            // 发送上传协议
+            String down = AgreementUtil.getAgreement("UPLOAD", upFile.getPath(), null, null);
+            System.out.println("发送协议: " + down);
+            AgreementUtil.sendAgreement(netOut, down);
+
+            try (FileInputStream fis = new FileInputStream(upFile);
+                 BufferedInputStream bis = new BufferedInputStream(fis)) {
+
+                byte[] buffer = new byte[4096];
+                int len;
+                long totalSent = 0;
+
+                System.out.println("开始发送文件数据...");
+
+                while ((len = bis.read(buffer)) != -1) {
+                    netOut.write(buffer, 0, len);
+                    totalSent += len;
+                    if (totalSent % (1024 * 1024) == 0) { // 每MB打印一次
+                        System.out.println("已发送: " + (totalSent / 1024 / 1024) + "MB");
+                    }
+                }
+                netOut.flush();
+                System.out.println("文件数据发送完毕，总共发送: " + totalSent + " 字节");
+
+                System.out.println("关闭输出流...");
+                socket.shutdownOutput();
+                System.out.println("输出流已关闭");
+            }
+
+            System.out.println("等待服务器响应...");
+            BufferedReader br = new BufferedReader(new InputStreamReader(netIn));
+            String firstLine = br.readLine();
+            System.out.println("收到服务器响应: " + firstLine);
+
+            String type = AgreementUtil.getStatus(firstLine);
+            if (type.equals("OK")) {
+                String fileName = AgreementUtil.getFileName(firstLine);
+                System.out.println(fileName + "上传成功");
+            } else {
+                System.out.println("上传失败: " + AgreementUtil.getMessage(firstLine));
+            }
+        } catch (IOException e) {
+            System.out.println("上传过程中发生异常: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }*/
+
+
 }
